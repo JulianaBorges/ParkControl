@@ -2,7 +2,7 @@
 <?php
 
 // Conectar ao banco de dados
-require_once "conectar.php";
+require_once "../saida/conectar.php";
 
 // Receber a placa digitada
 $placa = strtoupper(trim($_GET["placa"] ?? ""));
@@ -54,7 +54,7 @@ $veiculo = $resultado->fetch_assoc();
 
     <title>Resultado da Pesquisa</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style-saida.css">
 </head>
 
 <body>
@@ -89,7 +89,7 @@ $veiculo = $resultado->fetch_assoc();
                 <?= htmlspecialchars($veiculo["data_entrada"]) ?>
             </p>
 
-            <form action="finalizar.php" method="POST">
+            <form action="../pages/finalizar.php" method="POST">
 
                 <input
                     type="hidden"
@@ -111,7 +111,7 @@ $veiculo = $resultado->fetch_assoc();
 
         <?php endif; ?>
 
-        <a href="index.php">Voltar</a>
+        <a href="../pages/saida.php">Voltar</a>
 
     </main>
 
