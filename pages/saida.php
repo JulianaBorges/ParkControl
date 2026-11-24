@@ -8,7 +8,7 @@
 
     <title>ParkControl - Registro de Saída</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../assets/css/style-saida.css">
 </head>
 
 <body>
