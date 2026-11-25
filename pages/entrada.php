@@ -1,6 +1,6 @@
 
 <?php
-require_once "conexao.php";
+require_once "../conexao.php";
 
 $mensagem = "";
 $tipoMensagem = "";
@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // 1. Verifica se o veículo está cadastrado
             $sql = "SELECT id FROM veiculos WHERE REPLACE(REPLACE(UPPER(placa), ' ', ''), '-', '') = :placa";
 
-            $consulta = $pdo->prepare($sql);
+            $consulta = $conexao->prepare($sql);
             $consulta->execute(["placa" => $placa]);
 
             $veiculo = $consulta->fetch();
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         AND data_saida IS NULL
                         LIMIT 1";
 
-                $consulta = $pdo->prepare($sql);
+                $consulta = $conexao->prepare($sql);
                 $consulta->execute([
                     "veiculo_id" => $veiculo["id"]
                 ]);
@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             (veiculo_id, status)
                             VALUES (:veiculo_id, 'ESTACIONADO')";
 
-                    $consulta = $pdo->prepare($sql);
+                    $consulta = $conexao->prepare($sql);
                     $consulta->execute([
                         "veiculo_id" => $veiculo["id"]
                     ]);

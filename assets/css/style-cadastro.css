@@ -1,0 +1,177 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    min-height: 100vh;
+    padding: 40px 15px;
+}
+
+.container {
+    background: white;
+    width: 95%;
+    max-width: 1050px;
+    margin: auto;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+    color: #12345a;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    text-align: center;
+    color: #555;
+    margin-bottom: 35px;
+}
+
+h2 {
+    color: #12345a;
+    margin-bottom: 20px;
+}
+
+.cadastro,
+.lista {
+    margin-top: 30px;
+}
+
+label {
+    display: block;
+    margin: 15px 0 8px;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 18px;
+    margin-top: 15px;
+    background: #12345a;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1c4d80;
+}
+
+.mensagem {
+    background: #dcfce7;
+    color: #166534;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.erro {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.cancelar {
+    display: inline-block;
+    margin-left: 10px;
+    color: #12345a;
+    text-decoration: none;
+}
+
+.tabela-responsiva {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    padding: 13px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: #12345a;
+    color: white;
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.acoes form {
+    margin: 0;
+}
+
+.btn-editar,
+.btn-excluir {
+    display: inline-block;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-editar {
+    background: #2563eb;
+}
+
+.btn-editar:hover {
+    background: #1d4ed8;
+}
+
+.btn-excluir {
+    background: #dc2626;
+    margin: 0;
+}
+
+.btn-excluir:hover {
+    background: #b91c1c;
+}
+
+.vazio {
+    text-align: center;
+    color: #777;
+    padding: 25px;
+}
+
+@media (max-width: 650px) {
+    .container {
+        padding: 20px;
+    }
+
+    th,
+    td {
+        padding: 8px;
+        font-size: 13px;
+    }
+}

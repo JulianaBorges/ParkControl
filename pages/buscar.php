@@ -2,7 +2,7 @@
 <?php
 
 // Conectar ao banco de dados
-require_once "../saida/conectar.php";
+require_once "../conexao.php";
 
 // Receber a placa digitada
 $placa = strtoupper(trim($_GET["placa"] ?? ""));
