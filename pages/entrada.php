@@ -1,6 +1,7 @@
 
 <?php
-require_once "../conexao.php";
+
+require_once __DIR__ . "/../conexao.php";
 
 $mensagem = "";
 $tipoMensagem = "";
@@ -11,20 +12,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $placa = str_replace([" ", "-"], "", $placa);
 
     if (empty($placa)) {
+
         $mensagem = "Informe a placa do veículo.";
         $tipoMensagem = "erro";
+
     } else {
 
         try {
+
             // 1. Verifica se o veículo está cadastrado
-            $sql = "SELECT id FROM veiculos WHERE REPLACE(REPLACE(UPPER(placa), ' ', ''), '-', '') = :placa";
+            $sql = "SELECT id
+                    FROM veiculos
+                    WHERE REPLACE(REPLACE(UPPER(placa), ' ', ''), '-', '') = ?";
 
             $consulta = $conexao->prepare($sql);
-            $consulta->execute(["placa" => $placa]);
+            $consulta->bind_param("s", $placa);
+            $consulta->execute();
 
-            $veiculo = $consulta->fetch();
+            $resultado = $consulta->get_result();
+            $veiculo = $resultado->fetch_assoc();
+
+            $consulta->close();
 
             if (!$veiculo) {
+
                 $mensagem = "Veículo não cadastrado. Cadastre o veículo antes de registrar a entrada.";
                 $tipoMensagem = "erro";
 
@@ -33,18 +44,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 // 2. Verifica se já existe uma entrada em aberto
                 $sql = "SELECT id
                         FROM movimentacoes
-                        WHERE veiculo_id = :veiculo_id
+                        WHERE veiculo_id = ?
                         AND data_saida IS NULL
                         LIMIT 1";
 
                 $consulta = $conexao->prepare($sql);
-                $consulta->execute([
-                    "veiculo_id" => $veiculo["id"]
-                ]);
 
-                $movimentacao = $consulta->fetch();
+                $idVeiculo = (int) $veiculo["id"];
+
+                $consulta->bind_param("i", $idVeiculo);
+                $consulta->execute();
+
+                $resultado = $consulta->get_result();
+                $movimentacao = $resultado->fetch_assoc();
+
+                $consulta->close();
 
                 if ($movimentacao) {
+
                     $mensagem = "Este veículo já está estacionado.";
                     $tipoMensagem = "erro";
 
@@ -52,33 +69,42 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     // 3. Registra a entrada do veículo
                     // A data de entrada será preenchida automaticamente pelo MySQL
+
                     $sql = "INSERT INTO movimentacoes
                             (veiculo_id, status)
-                            VALUES (:veiculo_id, 'ESTACIONADO')";
+                            VALUES (?, 'ESTACIONADO')";
 
                     $consulta = $conexao->prepare($sql);
-                    $consulta->execute([
-                        "veiculo_id" => $veiculo["id"]
-                    ]);
+                    $consulta->bind_param("i", $idVeiculo);
+                    $consulta->execute();
+
+                    $consulta->close();
 
                     $mensagem = "Entrada do veículo registrada com sucesso!";
                     $tipoMensagem = "sucesso";
                 }
             }
 
-        } catch (PDOException $e) {
-            $mensagem = "Ocorreu um erro ao registrar a entrada. Tente novamente.";
+        } catch (mysqli_sql_exception $e) {
+
+            $mensagem = "Ocorreu um erro ao registrar a entrada. Verifique a conexão e a estrutura do banco de dados.";
             $tipoMensagem = "erro";
+
+            // Registra o erro no log do PHP para facilitar a investigação
+            error_log($e->getMessage());
         }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Registro de Entrada - ParkControl</title>
 
     <style>
@@ -154,6 +180,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             color: #721c24;
         }
     </style>
+
 </head>
 
 <body>
@@ -183,12 +210,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </form>
 
         <?php if (!empty($mensagem)): ?>
+
             <div class="mensagem <?php echo $tipoMensagem; ?>">
-                <?php echo htmlspecialchars($mensagem); ?>
+                <?php echo htmlspecialchars($mensagem, ENT_QUOTES, "UTF-8"); ?>
             </div>
+
         <?php endif; ?>
 
     </div>
 
 </body>
+
 </html>
