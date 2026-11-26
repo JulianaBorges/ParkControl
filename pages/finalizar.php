@@ -2,7 +2,7 @@
 <?php
 
 // Conectar ao banco de dados
-require_once "conectar.php";
+require_once "../conexao.php";
 
 // Verificar se o formulário foi enviado
 if ($_SERVER["REQUEST_METHOD"] != "POST") {
@@ -49,6 +49,6 @@ if ($stmt->affected_rows == 1) {
 
 }
 
-echo '<a href="index.php">Voltar ao início</a>';
+echo '<a href="../index.php">Voltar ao início</a>';
 
 ?>

@@ -2,13 +2,16 @@
 <?php
 
 // Conectar ao banco de dados
-require_once "../conexao.php";
+require_once __DIR__ . "/../conexao.php";
 
 // Receber a placa digitada
 $placa = strtoupper(trim($_GET["placa"] ?? ""));
 
+// Inicializar variável
+$veiculo = null;
+
 // Verificar se a placa foi informada
-if ($placa == "") {
+if ($placa === "") {
     die("Informe uma placa.");
 }
 
@@ -21,10 +24,10 @@ $sql = "SELECT
             m.data_entrada
         FROM movimentacoes m
         INNER JOIN veiculos v
-        ON m.veiculo_id = v.id
+            ON m.veiculo_id = v.id
         WHERE v.placa = ?
-        AND m.status = 'estacionado'
-        AND m.data_saida IS NULL
+            AND m.status = 'estacionado'
+            AND m.data_saida IS NULL
         ORDER BY m.id DESC
         LIMIT 1";
 
@@ -42,6 +45,9 @@ $resultado = $stmt->get_result();
 
 // Guardar os dados do veículo
 $veiculo = $resultado->fetch_assoc();
+
+// Fechar consulta
+$stmt->close();
 
 ?>
 
@@ -71,22 +77,22 @@ $veiculo = $resultado->fetch_assoc();
 
             <p>
                 <strong>Placa:</strong>
-                <?= htmlspecialchars($veiculo["placa"]) ?>
+                <?= htmlspecialchars($veiculo["placa"], ENT_QUOTES, "UTF-8") ?>
             </p>
 
             <p>
                 <strong>Modelo:</strong>
-                <?= htmlspecialchars($veiculo["modelo"]) ?>
+                <?= htmlspecialchars($veiculo["modelo"], ENT_QUOTES, "UTF-8") ?>
             </p>
 
             <p>
                 <strong>Cor:</strong>
-                <?= htmlspecialchars($veiculo["cor"]) ?>
+                <?= htmlspecialchars($veiculo["cor"], ENT_QUOTES, "UTF-8") ?>
             </p>
 
             <p>
                 <strong>Horário de entrada:</strong>
-                <?= htmlspecialchars($veiculo["data_entrada"]) ?>
+                <?= htmlspecialchars($veiculo["data_entrada"], ENT_QUOTES, "UTF-8") ?>
             </p>
 
             <form action="../pages/finalizar.php" method="POST">
@@ -94,7 +100,7 @@ $veiculo = $resultado->fetch_assoc();
                 <input
                     type="hidden"
                     name="id"
-                    value="<?= $veiculo["id"] ?>"
+                    value="<?= (int) $veiculo["id"] ?>"
                 >
 
                 <button type="submit">
