@@ -81,6 +81,6 @@ if ($stmt->affected_rows == 1) {
 
 }
 
-echo '<a href="index.php">Voltar ao início</a>';
+echo '<a href="../index.php">Voltar ao início</a>';
 
 ?>
