@@ -21,7 +21,7 @@
 
         <p>Informe a placa do veículo para registrar sua saída.</p>
 
-        <form action="buscar.php" method="GET">
+        <form action="../dados/buscar.php" method="GET">
 
             <label for="placa">Placa do veículo:</label>
 

@@ -11,63 +11,77 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $placa = str_replace([" ", "-"], "", $placa);
 
     if (empty($placa)) {
+
         $mensagem = "Informe a placa do veículo.";
         $tipoMensagem = "erro";
+
     } else {
 
         try {
-            // 1. Verifica se o veículo está cadastrado
-            $sql = "SELECT id FROM veiculos WHERE REPLACE(REPLACE(UPPER(placa), ' ', ''), '-', '') = :placa";
+
+            // Verifica se o veículo está cadastrado
+            $sql = "SELECT id
+                    FROM veiculos
+                    WHERE REPLACE(REPLACE(UPPER(placa), ' ', ''), '-', '') = ?";
 
             $consulta = $conexao->prepare($sql);
-            $consulta->execute(["placa" => $placa]);
+            $consulta->bind_param("s", $placa);
+            $consulta->execute();
 
-            $veiculo = $consulta->fetch();
+            $resultado = $consulta->get_result();
+            $veiculo = $resultado->fetch_assoc();
 
             if (!$veiculo) {
+
                 $mensagem = "Veículo não cadastrado. Cadastre o veículo antes de registrar a entrada.";
                 $tipoMensagem = "erro";
 
             } else {
 
-                // 2. Verifica se já existe uma entrada em aberto
+                // Verifica se já existe movimentação aberta
                 $sql = "SELECT id
                         FROM movimentacoes
-                        WHERE veiculo_id = :veiculo_id
+                        WHERE veiculo_id = ?
                         AND data_saida IS NULL
                         LIMIT 1";
 
                 $consulta = $conexao->prepare($sql);
-                $consulta->execute([
-                    "veiculo_id" => $veiculo["id"]
-                ]);
+                $consulta->bind_param("i", $veiculo["id"]);
+                $consulta->execute();
 
-                $movimentacao = $consulta->fetch();
+                $resultado = $consulta->get_result();
+                $movimentacao = $resultado->fetch_assoc();
 
                 if ($movimentacao) {
+
                     $mensagem = "Este veículo já está estacionado.";
                     $tipoMensagem = "erro";
 
                 } else {
 
-                    // 3. Registra a entrada do veículo
-                    // A data de entrada será preenchida automaticamente pelo MySQL
+                    $status = "ESTACIONADO";
+
                     $sql = "INSERT INTO movimentacoes
                             (veiculo_id, status)
-                            VALUES (:veiculo_id, 'ESTACIONADO')";
+                            VALUES (?, ?)";
 
                     $consulta = $conexao->prepare($sql);
-                    $consulta->execute([
-                        "veiculo_id" => $veiculo["id"]
-                    ]);
+                    $consulta->bind_param(
+                        "is",
+                        $veiculo["id"],
+                        $status
+                    );
+
+                    $consulta->execute();
 
                     $mensagem = "Entrada do veículo registrada com sucesso!";
                     $tipoMensagem = "sucesso";
                 }
             }
 
-        } catch (PDOException $e) {
-            $mensagem = "Ocorreu um erro ao registrar a entrada. Tente novamente.";
+        } catch (Exception $e) {
+
+            $mensagem = "Erro: " . $e->getMessage();
             $tipoMensagem = "erro";
         }
     }

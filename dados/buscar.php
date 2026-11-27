@@ -89,7 +89,7 @@ $veiculo = $resultado->fetch_assoc();
                 <?= htmlspecialchars($veiculo["data_entrada"]) ?>
             </p>
 
-            <form action="../pages/finalizar.php" method="POST">
+            <form action="finalizar.php" method="POST">
 
                 <input
                     type="hidden"
